@@ -1,11 +1,22 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello, Express!');
-});
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.use(
+  "/user",
+   (req , res , next) => {
+    console.log("1 is run successfully");
+   res.send("Route handlers!");
+   next();
+   },
+   (req ,res) => {
+
+     console.log("2 is run successfully");
+     res.send(" 2 Route handlers!");
+
+   }
+  );
+
+app.listen(7777, () => {
+  console.log("server run successfully");
 });
