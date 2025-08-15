@@ -16,5 +16,7 @@ const userSchema = new mongoose.Schema({
   location: String,
   bio: String,
 });
+//for making db fast
+userSchema.index({name: 1});
 
 module.exports = mongoose.model("User", userSchema);

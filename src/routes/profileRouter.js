@@ -1,26 +1,34 @@
 const express = require('express');
 const profileRouter = express.Router();
 //const User = require("./models/user");
-const jwt = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
 const  userAuth  = require("../middlewares/auth");
+const{validateEditProfileData} = require("../utils/validation")
 
 profileRouter.get("/profile",userAuth, async (req, res) => {
   try {
-	const cookies = req.cookies;
-	const { token } = cookies;
-
-	if (!token) {
-	  return res.status(401).send("Unauthorized: No token found");
-	}
-
-	const decodedMessage = jwt.verify(token, "Sinha@1234");
-	const { _id } = decodedMessage;
-
-	console.log("Logged In user is: " + _id);
-	res.send("Reading cookie - user authenticated");
-  } catch (err) {
-	res.status(401).send("Unauthorized: Invalid or expired token");
+	const user = req.user;
+	res.send(user);
+  }catch (err) {
+    res.status(400).send("Something went wrong: " + err.message);
   }
 });
+profileRouter.patch("/profile/edit" ,userAuth ,async (req , res) => {
+  try{
+    if(!validateEditProfileData(req)){
+      throw new Error("Invalid request edit");
+    }
+    const loggedInUser = req.user;
+    console.log(loggedInUser);
+    Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
+    
+    await loggedInUser.save();
+    console.log(loggedInUser);
+    res.send("Profile updated successfully");
+
+  }catch (err) {
+    res.status(400).send("Something went wrong: " + err.message);
+  }
+})
 
 module.exports = profileRouter;

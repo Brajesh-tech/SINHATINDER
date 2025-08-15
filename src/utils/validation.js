@@ -10,6 +10,17 @@ function validsignupdata(req) {
   if (!validator.isStrongPassword(password)) {
     throw new Error("Weak password");
   }
-}
+};
+const validateEditProfileData =(req) => {
+  const allowEditProfileData = ["name" , "location","age"];
 
-module.exports = { validsignupdata };
+  const isallowed = Object.keys(req.body).every((field) =>
+    allowEditProfileData.includes(field)
+  );
+  return isallowed;
+};
+
+
+module.exports = { validsignupdata,
+validateEditProfileData
+};
